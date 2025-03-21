@@ -75,7 +75,6 @@ class app_all_getresponse:
 
             # 读取 saveuniv.csv 文件
             df_saveuniv = pd.read_csv(save_univ_csv)
-
             # 查找对应的 dataid
             row = df_saveuniv[df_saveuniv['chaxunid'] == int(dataid)]
 

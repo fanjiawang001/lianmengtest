@@ -5,6 +5,11 @@ import json
 from app_all_getresponse import app_all_getresponse
 from nozujianhua.nozujianhua_all_getchaxunid import nozujianhua_all_getchaxunid
 from zujianhua.zujianhua_all_getchaxunid import zujianhua_all_getchaxunid
+from sqlalchemy import create_engine
+from lianmengtest.database_test.database_test import database_test
+
+engine = create_engine(
+        f'mysql+pymysql://{database_test().user}:{database_test().password}@{database_test().host}:{database_test().port}/{database_test().database}')
 
 android_device_ids = [
     "ANDROID_3bdcaccc36329d4d",
@@ -16,20 +21,20 @@ ios_device_ids = [
 ]
 read_csvs={
     '激励':{
-        'zujianhua':'zujianhua_jili_shaixuanid.csv',
-        'nozujianhua':'nozujianhua_jili_chaxunid.csv'
+        'zujianhua':'zujianhua_jili_shaixuanid',
+        'nozujianhua':'nozujianhua_jili_chaxunid'
     },
     '插屏':{
-        'zujianhua':'zujianhua_chaping_shaixuanid.csv',
-        'nozujianhua':'nozujianhua_chaping_chaxunid.csv'
+        'zujianhua':'zujianhua_chaping_shaixuanid',
+        'nozujianhua':'nozujianhua_chaping_chaxunid'
     },
     '全屏':{
-        'zujianhua': 'zujianhua_quanping_shaixuanid.csv',
-        'nozujianhua': 'nozujianhua_quanping_chaxunid.csv'
+        'zujianhua': 'zujianhua_quanping_shaixuanid',
+        'nozujianhua': 'nozujianhua_quanping_chaxunid'
     },
     '开屏':{
-        'zujianhua': 'zujianhua_kaiping_shaixuanid.csv',
-        'nozujianhua': 'nozujianhua_kaiping_chaxunid.csv'
+        'zujianhua': 'zujianhua_kaiping_shaixuanid',
+        'nozujianhua': 'nozujianhua_kaiping_chaxunid'
     },
 }
 save_univ_csvs = {
@@ -55,10 +60,11 @@ class MyFrame(wx.Frame):
     def __init__(self):
         super().__init__(parent=None, title='联盟SDK测试')
         # 初始化实例变量
-        self.read_csv_zujianhua = 'zujianhua_jili_shaixuanid.csv'
-        self.read_csv_nozujianhua = 'nozujianhua_jili_chaxunid.csv'
-        self.save_univ_csv_zujianhua = 'zujianhua_jili_shaixuanid_save.csv'
-        self.save_univ_csv_nozujianhua = 'nozujianhua_jili_chaxunid_save.csv'
+
+        self.read_csv_zujianhua = 'zujianhua_jili_shaixuanid'
+        self.read_csv_nozujianhua = 'nozujianhua_jili_chaxunid'
+        self.save_univ_csv_zujianhua = 'zujianhua_jili_shaixuanid_save'
+        self.save_univ_csv_nozujianhua = 'nozujianhua_jili_chaxunid_save'
 
         self.iszujianhua = False
         self.issave = False
@@ -215,22 +221,30 @@ class MyFrame(wx.Frame):
         try:
             # 读取 CSV 文件
             if iszujianhua == 1:
-                df = pd.read_csv(self.read_csv_zujianhua)
+                # df = pd.read_csv(self.read_csv_zujianhua)
+                df = pd.read_sql_table(self.read_csv_zujianhua, con=engine)
+                engine.dispose()
                 self.iszujianhua = True
                 self.issave = False
                 self.save_univ_csv = ''
             elif iszujianhua == 2:
-                df = pd.read_csv(self.read_csv_nozujianhua)
+                # df = pd.read_csv(self.read_csv_nozujianhua)
+                df = pd.read_sql_table(self.read_csv_nozujianhua, con=engine)
+                engine.dispose()
                 self.iszujianhua = False
                 self.issave = False
                 self.save_univ_csv = ''
             elif iszujianhua == 3:
                 df = pd.read_csv(self.save_univ_csv_zujianhua)
+                # df = pd.read_sql_table(self.save_univ_csv_zujianhua, con=engine)
+                # engine.dispose()
                 self.iszujianhua = True
                 self.issave = True
                 self.save_univ_csv = self.save_univ_csv_zujianhua
             elif iszujianhua == 4:
                 df = pd.read_csv(self.save_univ_csv_nozujianhua)
+                # df = pd.read_sql_table(self.save_univ_csv_nozujianhua, con=engine)
+                # engine.dispose()
                 self.iszujianhua = False
                 self.issave = True
                 self.save_univ_csv = self.save_univ_csv_nozujianhua
@@ -288,7 +302,7 @@ class MyFrame(wx.Frame):
                 wx.MessageBox("查询 ID 为空", "Error", wx.OK | wx.ICON_ERROR)
                 self.grid.SetCellValue(row, 4, "查询 ID 为空")
                 return
-            print(f"chaxunid: {chaxunid}iszujianhua: {self.iszujianhua}issave: {self.issave}save_univ_csv: {self.save_univ_csv}")
+            print(f"chaxunid: {chaxunid},iszujianhua: {self.iszujianhua},issave: {self.issave},save_univ_csv: {self.save_univ_csv}")
             response_value = app_all_getresponse.fetch_response(chaxunid, iszujianhua=self.iszujianhua, issave=self.issave, save_univ_csv=self.save_univ_csv)
             if response_value is not None:
                 # 确保 response_value 为字符串
