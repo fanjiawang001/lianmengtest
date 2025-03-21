@@ -1,11 +1,17 @@
 import requests
 import pandas as pd
 import json
+from sqlalchemy import create_engine
+from lianmengtest.database_test.database_test import database_test
+
 class zujianhua_all_getchaxunid:
+    # 创建 SQLAlchemy 引擎
+    engine = create_engine(
+        f'mysql+pymysql://{database_test().user}:{database_test().password}@{database_test().host}:{database_test().port}/{database_test().database}')
 
     def getpageid(self):
         # 假设你已经将 JSON 数据保存在一个文件中，文件名为 kconf.json
-        json_file_path = 'zujianhua/zujianhua_mobankconf.json'
+        json_file_path = 'zujianhua_mobankconf.json'
 
         # 读取 JSON 数据
         with open(json_file_path, 'r', encoding='utf-8') as file:
@@ -25,14 +31,18 @@ class zujianhua_all_getchaxunid:
         df = pd.DataFrame(records)
 
         # 将 DataFrame 保存为 CSV 文件
-        csv_file_path = 'zujianhua/zujianhua_getpageid.csv'
+        csv_file_path = 'zujianhua_getpageid.csv'
         df.to_csv(csv_file_path, index=False)
 
         print(f"数据已成功保存至 {csv_file_path}")
+        # 将数据写入数据库
+        df.to_sql(name='zujianhua_getpageid', con=self.engine, if_exists='replace', index=False)
+        print(f"Data written to table: zujianhua_getpageid")
+        self.engine.dispose()
 
     def getchaxunid(self):
         # 读取 CSV 文件并获取 pageid 和 name 列
-        data = pd.read_csv('zujianhua/zujianhua_getpageid.csv')
+        data = pd.read_csv('zujianhua_getpageid.csv')
         pageid_list = data['pageid'].tolist()  # 将 pageid 列转换为列表
         name_list = data['name'].tolist()  # 将 name 列转换为列表
 
@@ -102,7 +112,12 @@ class zujianhua_all_getchaxunid:
         result_df['chaxunid'] = result_df['chaxunid'].astype('Int64')  # 使用 'Int64' 以允许 None 值
 
         # 将结果保存到新的 CSV 文件
-        result_df.to_csv("zujianhua/zujianhua_getchaxunid.csv", index=False)
+        result_df.to_csv("zujianhua_getchaxunid.csv", index=False)
+        print(f"数据已成功保存至 zujianhua_getchaxunid.csv")
+        # 将数据写入数据库
+        result_df.to_sql(name='zujianhua_getchaxunid', con=self.engine, if_exists='replace', index=False)
+        print(f"Data written to table: zujianhua_getchaxunid")
+        self.engine.dispose()
 
         # 输出结果
         print("Collected IDs:", chaxunid_list)
@@ -113,23 +128,27 @@ class zujianhua_all_getchaxunid:
         shaixuan_config = {
             "chaping": {
                 "num": "313",
-                "csv": 'zujianhua_chaping_shaixuanid.csv'
+                "csv": '../zujianhua_chaping_shaixuanid.csv',
+                "table":'zujianhua_chaping_shaixuanid'
             },
             "kaiping": {
                 "num": "304",
-                "csv": 'zujianhua_kaiping_shaixuanid.csv'
+                "csv": '../zujianhua_kaiping_shaixuanid.csv',
+                "table": 'zujianhua_kaiping_shaixuanid'
             },
             "quanping": {
                 "num": "303",
-                "csv": 'zujianhua_quanping_shaixuanid.csv'
+                "csv": '../zujianhua_quanping_shaixuanid.csv',
+                "table": 'zujianhua_quanping_shaixuanid'
             },
             "jili": {
                 "num": "300",
-                "csv": 'zujianhua_jili_shaixuanid.csv'
+                "csv": '../zujianhua_jili_shaixuanid.csv',
+                "table": 'zujianhua_jili_shaixuanid'
             }
         }
 
-        input_file_path = 'zujianhua/zujianhua_getchaxunid.csv'  # 输入文件路径
+        input_file_path = 'zujianhua_getchaxunid.csv'  # 输入文件路径
         """根据给定的筛选条件筛选数据并保存结果"""
         # 读取 CSV 文件
         df = pd.read_csv(input_file_path)
@@ -148,6 +167,10 @@ class zujianhua_all_getchaxunid:
             # 保存到新的 CSV 文件
             result_df.to_csv(shaixuan_config[key]['csv'], index=False)
             print('共',len(result_df['chaxunid']),'条数据','已写入', shaixuan_config[key]['csv'], '文件')
+            # 将数据写入数据库
+            df.to_sql(name=shaixuan_config[key]['table'], con=self.engine, if_exists='replace', index=False)
+            print(f"Data written to table: {shaixuan_config[key]['table']}")
+            self.engine.dispose()
 
 
     def main(self):

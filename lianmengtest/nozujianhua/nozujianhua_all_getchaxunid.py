@@ -1,14 +1,18 @@
 import json
 import pandas as pd
 import requests
+from sqlalchemy import create_engine
+from lianmengtest.database_test.database_test import database_test
 class nozujianhua_all_getchaxunid:
     # 广告样式与对应的 CSV 文件路径
     adstyle_mapping = {
-        "chaping": {"adstyle": "13", "csv": 'nozujianhua_chaping_chaxunid.csv'},
-        "kaiping": {"adstyle": "4", "csv": 'nozujianhua_kaiping_chaxunid.csv'},
-        "quanping": {"adstyle": "3", "csv": 'nozujianhua_quanping_chaxunid.csv'},
-        "jili": {"adstyle": "2", "csv": 'nozujianhua_jili_chaxunid.csv'},
+        "chaping": {"adstyle": "13", "csv": '../nozujianhua_chaping_chaxunid.csv',"table":'nozujianhua_chaping_chaxunid'},
+        "kaiping": {"adstyle": "4", "csv": '../nozujianhua_kaiping_chaxunid.csv',"table":'nozujianhua_kaiping_chaxunid'},
+        "quanping": {"adstyle": "3", "csv": '../nozujianhua_quanping_chaxunid.csv',"table":'nozujianhua_quanping_chaxunid'},
+        "jili": {"adstyle": "2", "csv": '../nozujianhua_jili_chaxunid.csv',"table":'nozujianhua_jili_chaxunid'},
     }
+    # 创建 SQLAlchemy 引擎
+    engine = create_engine(f'mysql+pymysql://{database_test().user}:{database_test().password}@{database_test().host}:{database_test().port}/{database_test().database}')
 
     # 请求头
     headers = {
@@ -44,8 +48,8 @@ class nozujianhua_all_getchaxunid:
             print(f"Error fetching data for adStyle {adstyle}: {e}")
             return None
 
-    def process_response(self,response_result, csv_path):
-        """处理响应数据并写入 CSV 文件"""
+    def process_response(self,response_result, csv_path,sql_path):
+        """处理响应数据并写入 CSV 文件和数据库"""
         if 'data' in response_result and 'list' in response_result['data']:
             chaxunid = [int(item['id']) for item in response_result['data']['list']]
             names = [item['description'] for item in response_result['data']['list']]
@@ -57,7 +61,11 @@ class nozujianhua_all_getchaxunid:
             pageid = [None] * len(chaxunid)
             df = pd.DataFrame({'pageid': pageid, 'chaxunid': chaxunid, 'name': names})
             df.to_csv(csv_path, index=False, encoding='utf-8-sig')
-            print(f"Data written to {csv_path}")
+            print(f"Data written to csv file: {csv_path}")
+            # 将数据写入数据库
+            df.to_sql(name=sql_path,con=self.engine, if_exists='replace', index=False)
+            print(f"Data written to table: {sql_path}")
+            self.engine.dispose()
         else:
             print("No data found in the response.")
 
@@ -66,7 +74,7 @@ class nozujianhua_all_getchaxunid:
             print(f"Fetching data for {key}...")
             response_result = self.fetch_data(value['adstyle'])
             if response_result:
-                self.process_response(response_result, value['csv'])
+                self.process_response(response_result, value['csv'],value['table'])
 
 if __name__ == '__main__':
     nozujianhua_all_getchaxunid().main()
