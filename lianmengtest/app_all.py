@@ -12,7 +12,7 @@ engine = create_engine(
         f'mysql+pymysql://{database_test().user}:{database_test().password}@{database_test().host}:{database_test().port}/{database_test().database}')
 
 android_device_ids = [
-    "ANDROID_3bdcaccc36329d4d",
+    "ANDROID_4d8eb9184c10f1c3",
     'ANDROID_06281416577b28d8'
 ]
 ios_device_ids = [

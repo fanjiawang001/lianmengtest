@@ -6,10 +6,10 @@ from lianmengtest.database_test.database_test import database_test
 class nozujianhua_all_getchaxunid:
     # 广告样式与对应的 CSV 文件路径
     adstyle_mapping = {
-        "chaping": {"adstyle": "13", "csv": '../nozujianhua_chaping_chaxunid.csv',"table":'nozujianhua_chaping_chaxunid'},
-        "kaiping": {"adstyle": "4", "csv": '../nozujianhua_kaiping_chaxunid.csv',"table":'nozujianhua_kaiping_chaxunid'},
-        "quanping": {"adstyle": "3", "csv": '../nozujianhua_quanping_chaxunid.csv',"table":'nozujianhua_quanping_chaxunid'},
-        "jili": {"adstyle": "2", "csv": '../nozujianhua_jili_chaxunid.csv',"table":'nozujianhua_jili_chaxunid'},
+        "chaping": {"adstyle": "13", "csv": 'nozujianhua_chaping_chaxunid.csv',"table":'nozujianhua_chaping_chaxunid'},
+        "kaiping": {"adstyle": "4", "csv": 'nozujianhua_kaiping_chaxunid.csv',"table":'nozujianhua_kaiping_chaxunid'},
+        "quanping": {"adstyle": "3", "csv": 'nozujianhua_quanping_chaxunid.csv',"table":'nozujianhua_quanping_chaxunid'},
+        "jili": {"adstyle": "2", "csv": 'nozujianhua_jili_chaxunid.csv',"table":'nozujianhua_jili_chaxunid'},
     }
     # 创建 SQLAlchemy 引擎
     engine = create_engine(f'mysql+pymysql://{database_test().user}:{database_test().password}@{database_test().host}:{database_test().port}/{database_test().database}')
@@ -65,7 +65,7 @@ class nozujianhua_all_getchaxunid:
             # 将数据写入数据库
             df.to_sql(name=sql_path,con=self.engine, if_exists='replace', index=False)
             print(f"Data written to table: {sql_path}")
-            self.engine.dispose()
+            # self.engine.dispose()
         else:
             print("No data found in the response.")
 
@@ -75,6 +75,7 @@ class nozujianhua_all_getchaxunid:
             response_result = self.fetch_data(value['adstyle'])
             if response_result:
                 self.process_response(response_result, value['csv'],value['table'])
+        self.engine.dispose()
 
 if __name__ == '__main__':
     nozujianhua_all_getchaxunid().main()
