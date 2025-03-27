@@ -40,19 +40,19 @@ read_csvs={
 save_univ_csvs = {
     '激励':{
         'zujianhua':'zujianhua_jili_shaixuanid_save.csv',
-        'nozujianhua':'nozujianhua_jili_chaxunid_save.csv'
+        'nozujianhua':'nozujianhua_jili_chaxunid_save'
     },
     '插屏':{
         'zujianhua':'zujianhua_chaping_shaixuanid_save.csv',
-        'nozujianhua':'nozujianhua_chaping_chaxunid_save.csv'
+        'nozujianhua':'nozujianhua_chaping_chaxunid_save'
     },
     '全屏':{
         'zujianhua': 'zujianhua_quanping_shaixuanid_save.csv',
-        'nozujianhua': 'nozujianhua_quanping_chaxunid_save.csv'
+        'nozujianhua': 'nozujianhua_quanping_chaxunid_save'
     },
     '开屏':{
         'zujianhua': 'zujianhua_kaiping_shaixuanid_save.csv',
-        'nozujianhua': 'nozujianhua_kaiping_chaxunid_save.csv'
+        'nozujianhua': 'nozujianhua_kaiping_chaxunid_save'
     },
 }
 
@@ -242,9 +242,9 @@ class MyFrame(wx.Frame):
                 self.issave = True
                 self.save_univ_csv = self.save_univ_csv_zujianhua
             elif iszujianhua == 4:
-                df = pd.read_csv(self.save_univ_csv_nozujianhua)
-                # df = pd.read_sql_table(self.save_univ_csv_nozujianhua, con=engine)
-                # engine.dispose()
+                # df = pd.read_csv(self.save_univ_csv_nozujianhua)
+                df = pd.read_sql_table(self.save_univ_csv_nozujianhua, con=engine)
+                engine.dispose()
                 self.iszujianhua = False
                 self.issave = True
                 self.save_univ_csv = self.save_univ_csv_nozujianhua
@@ -303,7 +303,7 @@ class MyFrame(wx.Frame):
                 self.grid.SetCellValue(row, 4, "查询 ID 为空")
                 return
             print(f"chaxunid: {chaxunid},iszujianhua: {self.iszujianhua},issave: {self.issave},save_univ_csv: {self.save_univ_csv}")
-            response_value = app_all_getresponse.fetch_response(chaxunid, iszujianhua=self.iszujianhua, issave=self.issave, save_univ_csv=self.save_univ_csv)
+            response_value = app_all_getresponse().fetch_response(dataid=chaxunid, iszujianhua=self.iszujianhua, issave=self.issave, save_univ_csv=self.save_univ_csv)
             if response_value is not None:
                 # 确保 response_value 为字符串
                 response_value_str = json.dumps(response_value, ensure_ascii=False)  # 转义并转换为字符串
@@ -327,12 +327,12 @@ class MyFrame(wx.Frame):
                 # 发送请求并检查结果
                 android_results = []
                 for android_device_id in android_device_ids:
-                    android_result = app_all_getresponse.send_compatibility_request(android_device_id, payload)
+                    android_result = app_all_getresponse().send_compatibility_request(android_device_id, payload)
                     android_results.append(android_result)
 
                 ios_results = []
                 for ios_device_id in ios_device_ids:
-                    ios_result = app_all_getresponse.send_compatibility_request(ios_device_id, payload)
+                    ios_result = app_all_getresponse().send_compatibility_request(ios_device_id, payload)
                     ios_results.append(ios_result)
 
                 if all(android_results) and all(ios_results):

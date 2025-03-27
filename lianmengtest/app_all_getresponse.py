@@ -1,9 +1,18 @@
 import requests
 import json
 import pandas as pd
+from sqlalchemy import create_engine
+from lianmengtest.database_test.database_test import database_test
+
 class app_all_getresponse:
+    def __init__(self):
+        # 创建 SQLAlchemy 引擎
+        self.engine = create_engine(
+            f'mysql+pymysql://{database_test().user}:{database_test().password}@{database_test().host}:{database_test().port}/{database_test().database}',
+            pool_pre_ping=True)
+
     # 根据id获取广告数据
-    def fetch_response(dataid,iszujianhua=False,issave=False,save_univ_csv=''):
+    def fetch_response(self,dataid=1,iszujianhua=False,issave=False,save_univ_csv=''):
         if not issave:
             if iszujianhua:
                 headers = {
@@ -74,7 +83,9 @@ class app_all_getresponse:
                 return None
 
             # 读取 saveuniv.csv 文件
-            df_saveuniv = pd.read_csv(save_univ_csv)
+            # df_saveuniv = pd.read_csv(save_univ_csv)
+            # 读取数据库的表save_univ_csv
+            df_saveuniv = pd.read_sql_table(save_univ_csv, con=self.engine)
             # 查找对应的 dataid
             row = df_saveuniv[df_saveuniv['chaxunid'] == int(dataid)]
 
@@ -98,7 +109,7 @@ class app_all_getresponse:
                 return None
 
     # 接口传mock数据至指定测试环境https://adqa.test.gifshow.com
-    def send_compatibility_request(device_id, payload):
+    def send_compatibility_request(self,device_id, payload):
         headers = {
         'accept': 'application/json, text/plain, */*',
         'accept-language': 'zh-CN,zh-TW;q=0.9,zh;q=0.8,en-US;q=0.7,en;q=0.6,zh-HK;q=0.5',

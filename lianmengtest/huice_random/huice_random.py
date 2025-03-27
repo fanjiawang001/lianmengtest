@@ -13,7 +13,7 @@ class HuiceRandom:
             'banner + 新插屏': 0.5,
             '版本壳 + 插件': 0.5,
         }
-        self.renyuanlist = ['范佳旺', '刘静怡', '葛珺','杨跃娟']
+        self.renyuanlist = ['范佳旺', '刘静怡', '葛珺']
         self.changjinglist = list(self.changjing.keys())
         self.total_sum = sum(self.changjing.values())
         self.value_per_person = self.total_sum / len(self.renyuanlist)

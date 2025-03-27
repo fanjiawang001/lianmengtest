@@ -60,8 +60,8 @@ class nozujianhua_all_getchaxunid:
             # 将数据写入 CSV 文件
             pageid = [None] * len(chaxunid)
             df = pd.DataFrame({'pageid': pageid, 'chaxunid': chaxunid, 'name': names})
-            df.to_csv(csv_path, index=False, encoding='utf-8-sig')
-            print(f"Data written to csv file: {csv_path}")
+            # df.to_csv(csv_path, index=False, encoding='utf-8-sig')
+            # print(f"Data written to csv file: {csv_path}")
             # 将数据写入数据库
             df.to_sql(name=sql_path,con=self.engine, if_exists='replace', index=False)
             print(f"Data written to table: {sql_path}")

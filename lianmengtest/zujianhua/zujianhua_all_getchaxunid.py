@@ -32,9 +32,9 @@ class zujianhua_all_getchaxunid:
 
         # 将 DataFrame 保存为 CSV 文件
         csv_file_path = 'zujianhua_getpageid.csv'
-        df.to_csv(csv_file_path, index=False)
-
-        print(f"数据已成功保存至 {csv_file_path}")
+        # df.to_csv(csv_file_path, index=False)
+        #
+        # print(f"数据已成功保存至 {csv_file_path}")
         # 将数据写入数据库
         df.to_sql(name='zujianhua_getpageid', con=self.engine, if_exists='replace', index=False)
         print(f"Data written to table: zujianhua_getpageid")
@@ -115,8 +115,8 @@ class zujianhua_all_getchaxunid:
         result_df['chaxunid'] = result_df['chaxunid'].astype('Int64')  # 使用 'Int64' 以允许 None 值
 
         # 将结果保存到新的 CSV 文件
-        result_df.to_csv("zujianhua_getchaxunid.csv", index=False)
-        print(f"数据已成功保存至 zujianhua_getchaxunid.csv")
+        # result_df.to_csv("zujianhua_getchaxunid.csv", index=False)
+        # print(f"数据已成功保存至 zujianhua_getchaxunid.csv")
         # 将数据写入数据库
         result_df.to_sql(name='zujianhua_getchaxunid', con=self.engine, if_exists='replace', index=False)
         print(f"Data written to table: zujianhua_getchaxunid")
@@ -170,8 +170,8 @@ class zujianhua_all_getchaxunid:
             result_df['chaxunid'] = pd.to_numeric(result_df['chaxunid'], errors='coerce').astype('Int64')
 
             # 保存到新的 CSV 文件
-            result_df.to_csv(shaixuan_config[key]['csv'], index=False)
-            print('共',len(result_df['chaxunid']),'条数据','已写入', shaixuan_config[key]['csv'], '文件')
+            # result_df.to_csv(shaixuan_config[key]['csv'], index=False)
+            # print('共',len(result_df['chaxunid']),'条数据','已写入', shaixuan_config[key]['csv'], '文件')
             # 将数据写入数据库
             result_df.to_sql(name=shaixuan_config[key]['table'], con=self.engine, if_exists='replace', index=False)
             print(f"Data written to table: {shaixuan_config[key]['table']}")
