@@ -11,7 +11,7 @@ class zujianhua_all_getchaxunid:
 
     def getpageid(self):
         # 假设你已经将 JSON 数据保存在一个文件中，文件名为 kconf.json
-        json_file_path = 'zujianhua/zujianhua_mobankconf.json'
+        json_file_path = 'zujianhua_mobankconf.json'
 
         # 读取 JSON 数据
         with open(json_file_path, 'r', encoding='utf-8') as file:
