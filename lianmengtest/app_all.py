@@ -39,19 +39,19 @@ read_csvs={
 }
 save_univ_csvs = {
     '激励':{
-        'zujianhua':'zujianhua_jili_shaixuanid_save.csv',
+        'zujianhua':'zujianhua_jili_shaixuanid_save',
         'nozujianhua':'nozujianhua_jili_chaxunid_save'
     },
     '插屏':{
-        'zujianhua':'zujianhua_chaping_shaixuanid_save.csv',
+        'zujianhua':'zujianhua_chaping_shaixuanid_save',
         'nozujianhua':'nozujianhua_chaping_chaxunid_save'
     },
     '全屏':{
-        'zujianhua': 'zujianhua_quanping_shaixuanid_save.csv',
+        'zujianhua': 'zujianhua_quanping_shaixuanid_save',
         'nozujianhua': 'nozujianhua_quanping_chaxunid_save'
     },
     '开屏':{
-        'zujianhua': 'zujianhua_kaiping_shaixuanid_save.csv',
+        'zujianhua': 'zujianhua_kaiping_shaixuanid_save',
         'nozujianhua': 'nozujianhua_kaiping_chaxunid_save'
     },
 }
@@ -235,8 +235,8 @@ class MyFrame(wx.Frame):
                 self.issave = False
                 self.save_univ_csv = ''
             elif iszujianhua == 3:
-                df = pd.read_csv(self.save_univ_csv_zujianhua)
-                # df = pd.read_sql_table(self.save_univ_csv_zujianhua, con=engine)
+                # df = pd.read_csv(self.save_univ_csv_zujianhua)
+                df = pd.read_sql_table(self.save_univ_csv_zujianhua, con=engine)
                 # engine.dispose()
                 self.iszujianhua = True
                 self.issave = True
